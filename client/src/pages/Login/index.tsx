@@ -3,6 +3,8 @@ import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 
+import Button from "../../components/Button";
+import Input from "../../components/Input";
 import { SocketContext } from "../../contexts/SocketContext";
 import { api } from "../../api";
 import { io } from "socket.io-client";
@@ -28,7 +30,11 @@ export default function Login() {
   const inputStyle =
     "bg-transparent p-4 border border-[#4e0eff] rounded-md text-white w-full text-base focus:border-[#997af0] focus:outline-none";
 
-  const { register, handleSubmit } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: {
       username: "",
@@ -41,14 +47,17 @@ export default function Login() {
     if (!data.success) {
       return toast.error(data.message);
     }
-    const socket = await io("http://localhost:3001").connect();
+    const socket = await io(import.meta.env.BACKEND_URL).connect();
     setSocket(socket);
-    localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+    localStorage.setItem(
+      import.meta.env.LOCALHOST_KEY,
+      JSON.stringify(data.user)
+    );
     navigate("/");
   };
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
+    if (localStorage.getItem(import.meta.env.LOCALHOST_KEY)) {
       navigate("/");
     }
   }, []);
@@ -61,28 +70,23 @@ export default function Login() {
           onSubmit={handleSubmit(login)}
         >
           <div className="flex items-center justify-center gap-4">
-            {/* <img src={Logo} alt="logo" /> */}
             <h1 className="text-white font-bold text-2xl">Login</h1>
           </div>
-          <input
-            className={inputStyle}
-            {...register("username")}
-            type="text"
+          <Input
+            name="username"
             placeholder="Username"
-            min="3"
+            register={register}
+            error={errors.username}
           />
-          <input
-            className={inputStyle}
-            {...register("password")}
-            type="password"
+          <Input
+            name="password"
             placeholder="Password"
+            type="password"
+            register={register}
+            error={errors.username}
           />
-          <button
-            className="bg-[#4e0eff] text-white px-4 py-4 border-none font-bold cursor-pointer rounded-md hover:bg-[#4e0eff]"
-            type="submit"
-          >
-            Log In
-          </button>
+          <Button type="submit">Log In</Button>
+
           <span className="text-white text-center">
             Don't have an account ?{" "}
             <Link

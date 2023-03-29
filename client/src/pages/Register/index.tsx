@@ -2,6 +2,8 @@ import * as yup from "yup";
 
 import { Link, useNavigate } from "react-router-dom";
 
+import Button from "../../components/Button";
+import Input from "../../components/Input";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -17,16 +19,16 @@ interface RegisterParams {
 const registerSchema = yup.object({
   username: yup
     .string()
-    .min(3, "Nome precisa ter no mínimo 3 caracteres")
-    .required("Campo obrigatório"),
-  email: yup.string().email("Email inválido").required("Campo obrigatório"),
+    .min(3, "Username must be at least 3 characters")
+    .required("Required field"),
+  email: yup.string().email("Invalid email").required("Required field"),
   password: yup
     .string()
-    .min(8, "A senha precisa ter no mínimo 8 caracteres")
-    .required("Campo obrigatório"),
+    .min(8, "The password must be at least 8 characters")
+    .required("Required field"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("password"), ""], "As senhas precisam ser iguais"),
+    .oneOf([yup.ref("password"), ""], "Passwords must match"),
 });
 
 export default function Register() {
@@ -55,7 +57,7 @@ export default function Register() {
 
     if (username.trim().length === 0) {
       setError("username", {
-        message: "Campo obrigatório",
+        message: "Required field",
       });
     } else {
       const { data } = await api.post("/api/register", {
@@ -68,7 +70,10 @@ export default function Register() {
         return toast.error(data.message);
       }
 
-      localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+      localStorage.setItem(
+        import.meta.env.LOCALHOST_KEY,
+        JSON.stringify(data.user)
+      );
       navigate("/");
     }
   };
@@ -80,40 +85,35 @@ export default function Register() {
         onSubmit={handleSubmit(registerAccount)}
       >
         <div className="flex items-center justify-center gap-4">
-          {/* <img src={Logo} alt="logo" /> */}
           <h1 className="text-white font-bold text-2xl">Create Account</h1>
         </div>
-        <input
-          className={inputStyle}
-          {...register("username")}
+        <Input
+          name="username"
+          register={register}
           placeholder="Username"
+          error={errors.username}
         />
-
-        <input
-          className={inputStyle}
-          {...register("email")}
-          type="email"
+        <Input
+          name="email"
+          register={register}
           placeholder="Email"
+          error={errors.email}
         />
-
-        <input
-          className={inputStyle}
-          {...register("password")}
+        <Input
+          name="password"
           type="password"
+          register={register}
           placeholder="Password"
+          error={errors.password}
         />
-        <input
-          className={inputStyle}
-          {...register("confirmPassword")}
+        <Input
+          name="confirmPassword"
           type="password"
-          placeholder="Confirm Password"
+          register={register}
+          placeholder="Password"
+          error={errors.confirmPassword}
         />
-        <button
-          className="bg-[#4e0eff] text-white px-4 py-4 border-none font-bold cursor-pointer rounded-md hover:bg-[#4e0eff]"
-          type="submit"
-        >
-          Create User
-        </button>
+        <Button type="submit">Create User</Button>
         <span className="text-white text-center">
           Already have an account ?{" "}
           <Link className="text-[#4e0eff] no-underline font-bold" to="/login">

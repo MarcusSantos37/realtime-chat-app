@@ -25,11 +25,11 @@ export default function ChatContainer({
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [messages, setMessages] = useState<Message[]>([]);
   const [arrivalMessage, setArrivalMessage] = useState<Message | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSendMessage = async (message: string) => {
-    const storedUser = localStorage.getItem("chat-app-user");
+    const storedUser = localStorage.getItem(import.meta.env.LOCALHOST_KEY);
 
     if (storedUser) {
       const user = await JSON.parse(storedUser);
@@ -54,7 +54,7 @@ export default function ChatContainer({
 
   useEffect(() => {
     if (socket) {
-      socket.on("messageRecieve", (message: string) => {
+      socket.on("messageReceive", (message: string) => {
         setArrivalMessage({ fromSelf: false, message });
       });
     }
@@ -89,7 +89,7 @@ export default function ChatContainer({
       <div className="flex justify-between items-center py-4 px-5">
         <div className="flex items-center gap-4">
           <div className="inline-flex items-center justify-center font-medium text-white bg-gray-400 rounded-full w-8 h-8">
-            {currentChat.username.substr(0, 1)}
+            {currentChat.username.substring(0, 1)}
           </div>
           <h3 className="text-white">{currentChat.username}</h3>
         </div>

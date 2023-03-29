@@ -26,7 +26,7 @@ export default function Chat() {
   }, [currentUser]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("chat-app-user");
+    const storedUser = localStorage.getItem(import.meta.env.LOCALHOST_KEY);
 
     if (storedUser !== null) {
       setCurrentUser(JSON.parse(storedUser));
@@ -43,7 +43,7 @@ export default function Chat() {
     }
   }, [currentUser]);
 
-  return !localStorage.getItem("chat-app-user") ? (
+  return !localStorage.getItem(import.meta.env.LOCALHOST_KEY) ? (
     <Navigate to="/login" replace />
   ) : (
     <div className="h-screen sm:w-screen flex flex-col justify-center gap-4 items-center bg-[#131324]">

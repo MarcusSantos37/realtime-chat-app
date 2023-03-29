@@ -7,7 +7,7 @@ interface ContactsProps {
 }
 
 export default function Contacts({ contacts, changeChat }: ContactsProps) {
-  const currentUserString = localStorage.getItem("chat-app-user");
+  const currentUserString = localStorage.getItem(import.meta.env.LOCALHOST_KEY);
   const currentUser: User | null = currentUserString
     ? JSON.parse(currentUserString)
     : null;
@@ -49,7 +49,7 @@ export default function Contacts({ contacts, changeChat }: ContactsProps) {
           <div className="bg-[#0d0d30] flex justify-center py-5 items-center gap-8">
             <div className="flex flex-row items-center gap-3">
               <div className="inline-flex items-center justify-center font-medium text-white bg-gray-400 rounded-full w-8 h-8">
-                {currentUser.username.substr(0, 1)}
+                {currentUser.username.substring(0, 1)}
               </div>
               <h2 className="text-white font-bold text-xl">
                 {currentUser.username}
