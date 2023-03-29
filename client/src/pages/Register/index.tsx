@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { SocketContext } from "../../contexts/SocketContext";
 import { api } from "../../api";
-import { io } from "socket.io-client";
+import { toast } from "react-toastify";
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -55,13 +55,25 @@ export default function Register() {
   });
 
   const registerAccount = async (values: RegisterParams) => {
-    if (values.username.trim().length === 0) {
+    const { username, email, password } = values;
+
+    if (username.trim().length === 0) {
       setError("username", {
         message: "Campo obrigatório",
       });
     } else {
-      const { data } = await api.post("/api/auth/", values);
-      navigate("/login");
+      const { data } = await api.post("/api/register", {
+        username,
+        email,
+        password,
+      });
+
+      if (!data.success) {
+        return toast.error(data.message);
+      }
+
+      localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+      navigate("/");
     }
   };
 
