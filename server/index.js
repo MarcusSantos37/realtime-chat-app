@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
+const socketIO = require("socket.io");
+
 const mongoose = require("mongoose");
 
 const userRoutes = require("./routes/userRoutes.js");
@@ -24,32 +26,26 @@ mongoose
   })
   .catch((err) => console.log(err.message));
 
-// const io = require("socket.io")(app, {
-//   cors: { origin: "http://127.0.0.1:5173" },
-// });
+const server = app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+});
 
-// io.on("connection", (socket) => {
-//   console.log("Usuário conectado!", socket.id);
+const io = socketIO(server, {
+  cors: "http://127.0.0.1:5173/",
+});
 
-//   socket.on("disconnect", (reason) => {
-//     console.log("Usuário desconectado!", socket.id);
-//   });
+global.onlineUsers = new Map();
 
-//   socket.on("setUsername", (username) => {
-//     socket.data.username = username;
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
+  socket.on("addUser", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
 
-//     console.log(socket.data.username);
-//   });
-
-//   socket.on("message", (text) => {
-//     io.emit("receivedMessage", {
-//       text,
-//       authorId: socket.id,
-//       author: socket.data.username,
-//     });
-//   });
-// });
-
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
-);
+  socket.on("sendMessage", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("messageRecieve", data.message);
+    }
+  });
+});
