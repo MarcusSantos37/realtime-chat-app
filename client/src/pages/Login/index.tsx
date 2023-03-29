@@ -1,10 +1,11 @@
 import * as yup from "yup";
 
 import { Link, useNavigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
 
 import { SocketContext } from "../../contexts/SocketContext";
-import { io } from "socket.io-client";
-import { useContext } from "react";
+import { api } from "../../api";
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -39,18 +40,20 @@ export default function Login() {
     },
   });
 
-  const login = async (data: LoginParams) => {
-    if (data.username.trim().length === 0) {
-      setError("username", {
-        message: "Campo obrigatório",
-      });
-    } else {
-      const socket = await io("http://localhost:3001").connect();
-      setSocket(socket);
-      socket.emit("setUsername", data.username);
+  const login = async (values: LoginParams) => {
+    const { data } = await api.post("/api/login", values);
+    if (!data.success) {
+      return toast.error(data.message);
+    }
+    localStorage.setItem("chat-app-user", JSON.stringify(data.user));
+    navigate("/");
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("chat-app-user")) {
       navigate("/");
     }
-  };
+  }, []);
 
   return (
     <>
