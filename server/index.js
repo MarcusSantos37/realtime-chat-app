@@ -3,11 +3,16 @@ const cors = require("cors");
 
 const mongoose = require("mongoose");
 
+const userRoutes = require("./routes/userRoutes.js");
+const messagesRoutes = require("./routes/messagesRoutes.js");
+
 const app = express();
 require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api", userRoutes, messagesRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL, {
