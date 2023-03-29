@@ -1,31 +1,50 @@
-const app = require("express")();
-const server = require("http").createServer(app);
-const io = require("socket.io")(server, {
-  cors: { origin: "http://127.0.0.1:5173" },
-});
+const express = require("express");
+const cors = require("cors");
 
-const PORT = 3001;
+const mongoose = require("mongoose");
 
-io.on("connection", (socket) => {
-  console.log("Usuário conectado!", socket.id);
+const app = express();
+require("dotenv").config();
 
-  socket.on("disconnect", (reason) => {
-    console.log("Usuário desconectado!", socket.id);
-  });
+app.use(cors());
+app.use(express.json());
 
-  socket.on("setUsername", (username) => {
-    socket.data.username = username;
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("DB Connection Sucessfull");
+  })
+  .catch((err) => console.log(err.message));
 
-    console.log(socket.data.username);
-  });
+// const io = require("socket.io")(app, {
+//   cors: { origin: "http://127.0.0.1:5173" },
+// });
 
-  socket.on("message", (text) => {
-    io.emit("receivedMessage", {
-      text,
-      authorId: socket.id,
-      author: socket.data.username,
-    });
-  });
-});
+// io.on("connection", (socket) => {
+//   console.log("Usuário conectado!", socket.id);
 
-server.listen(PORT, () => console.log("Server running..."));
+//   socket.on("disconnect", (reason) => {
+//     console.log("Usuário desconectado!", socket.id);
+//   });
+
+//   socket.on("setUsername", (username) => {
+//     socket.data.username = username;
+
+//     console.log(socket.data.username);
+//   });
+
+//   socket.on("message", (text) => {
+//     io.emit("receivedMessage", {
+//       text,
+//       authorId: socket.id,
+//       author: socket.data.username,
+//     });
+//   });
+// });
+
+app.listen(process.env.PORT, () =>
+  console.log(`Server running on port ${process.env.PORT}`)
+);
