@@ -1,74 +1,56 @@
 import * as yup from "yup";
 
-import { useContext, useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import { SocketContext } from "../../contexts/SocketContext";
-import { io } from "socket.io-client";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { yupResolver } from "@hookform/resolvers/yup";
-
-interface JoinChatParams {
-  message: string;
-}
-
-const joinSchema = yup.object({
-  message: yup.string().required("Campo obrigatório"),
-});
+import ChatContainer from "../../components/ChatContainer";
+import Contacts from "../../components/Contacts";
+import Welcome from "../../components/Welcome";
+import { api } from "../../api";
 
 export default function Chat() {
-  const navigate = useNavigate();
+  const [currentChat, setCurrentChat] = useState(undefined);
 
-  const { socket } = useContext(SocketContext);
+  const [contacts, setContacts] = useState([]);
+  const [currentUser, setCurrentUser] = useState(undefined);
 
-  const [messages, setMessages] = useState<any>([]);
-
-  const {
-    register,
-    handleSubmit,
-    setError,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(joinSchema),
-    defaultValues: {
-      message: "",
-    },
-  });
-
-  const submitMessage = async ({ message }: JoinChatParams) => {
-    if (message.trim().length === 0) {
-      setError("message", {
-        message: "Campo obrigatório",
-      });
-    } else {
-      await socket?.emit("message", message);
-      setValue("message", "");
-    }
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
   };
 
   useEffect(() => {
-    if (socket) {
-      socket.on("receivedMessage", (data) => {
-        setMessages((values: any) => [...values, data]);
-      });
-
-      return () => {
-        socket.off("receivedMessage");
-      };
+    if (localStorage.getItem("chat-app-user")) {
+      setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")));
     }
-  }, [socket]);
+  }, []);
 
-  return (
-    <form onSubmit={handleSubmit(submitMessage)}>
-      <h1>Chat</h1>
-      {messages.map((message: any, index: number) => (
-        <p className="text-3xl font-bold underline" key={index}>
-          {message.author}: {message.text}
-        </p>
-      ))}
-      <input {...register("message")} type="text" placeholder="Mensagem" />
-      <button>Enviar</button>
-    </form>
+  useEffect(() => {
+    if (currentUser) {
+      const getUsers = async () => {
+        const { data } = await api.get(`/api/users/${currentUser?._id}`);
+        setContacts(data);
+      };
+      getUsers();
+    }
+  }, [currentUser]);
+
+  return !localStorage.getItem("chat-app-user") ? (
+    <Navigate to="/login" replace />
+  ) : (
+    <div className="h-screen w-screen flex flex-col justify-center gap-4 items-center bg-[#131324]">
+      <div className="h-[85vh] w-full max-w-screen-xl bg-[#00000076]">
+        <div className="flex bg-[#080420] overflow-hidden h-full">
+          <Contacts contacts={contacts} changeChat={handleChatChange} />
+          {currentChat === undefined ? (
+            <Welcome currentUser={currentUser} />
+          ) : (
+            <ChatContainer
+              currentUser={currentUser}
+              currentChat={currentChat}
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

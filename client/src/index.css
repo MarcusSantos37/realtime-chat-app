@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.chat-scrollbar::-webkit-scrollbar {
+        width: 0.2rem;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #ffffff39;
+      width: 0.1rem;
+      border-radius: 1rem;
+}
+
+em-emoji-picker {
+      @apply !absolute !top-[-350px] max-h-80
+}

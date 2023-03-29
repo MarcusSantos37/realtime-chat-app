@@ -1,3 +1,5 @@
+import "react-toastify/dist/ReactToastify.css";
+
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Chat from "./Chat";
