@@ -1,26 +1,32 @@
+import { User } from "../types/User";
 import { useState } from "react";
 
 interface ContactsProps {
-  contacts: any;
-  changeChat: any;
+  contacts: User[];
+  changeChat: (contact: User) => void;
 }
 
 export default function Contacts({ contacts, changeChat }: ContactsProps) {
-  const currentUser = JSON.parse(localStorage.getItem("chat-app-user"));
+  const currentUserString = localStorage.getItem("chat-app-user");
+  const currentUser: User | null = currentUserString
+    ? JSON.parse(currentUserString)
+    : null;
 
-  const [currentSelected, setCurrentSelected] = useState(undefined);
+  const [currentSelected, setCurrentSelected] = useState<number | undefined>(
+    undefined
+  );
 
-  const changeCurrentChat = (index, contact) => {
+  const changeCurrentChat = (index: number, contact: User) => {
     setCurrentSelected(index);
     changeChat(contact);
   };
 
   return (
     <>
-      {currentUser.username && (
-        <div className="w-1/3 h-full flex flex-col">
+      {currentUser?.username && (
+        <div className="w-full sm:w-1/3 h-auto sm:h-full flex flex-col">
           <h3 className="text-white text-center py-3 text-lg">Chat</h3>
-          <div className="flex flex-col items-center overflow-auto gap-[0.8rem] chat-scrollbar mb-auto">
+          <div className="flex flex-col sm:mb-auto mb-5 items-center overflow-auto gap-[0.8rem] chat-scrollbar">
             {contacts?.map((contact, index) => {
               return (
                 <div

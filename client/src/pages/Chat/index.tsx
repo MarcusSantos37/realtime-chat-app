@@ -1,26 +1,35 @@
-import * as yup from "yup";
-
-import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import ChatContainer from "../../components/ChatContainer";
 import Contacts from "../../components/Contacts";
+import { Navigate } from "react-router-dom";
+import { SocketContext } from "../../contexts/SocketContext";
+import { User } from "../../types/User";
 import Welcome from "../../components/Welcome";
 import { api } from "../../api";
 
 export default function Chat() {
-  const [currentChat, setCurrentChat] = useState(undefined);
+  const { socket } = useContext(SocketContext);
 
   const [contacts, setContacts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentChat, setCurrentChat] = useState<User | undefined>(undefined);
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
 
-  const handleChatChange = (chat) => {
+  const handleChatChange = (chat: User) => {
     setCurrentChat(chat);
   };
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
-      setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")));
+    if (currentUser) {
+      socket?.emit("addUser", currentUser._id);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("chat-app-user");
+
+    if (storedUser !== null) {
+      setCurrentUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -37,9 +46,9 @@ export default function Chat() {
   return !localStorage.getItem("chat-app-user") ? (
     <Navigate to="/login" replace />
   ) : (
-    <div className="h-screen w-screen flex flex-col justify-center gap-4 items-center bg-[#131324]">
-      <div className="h-[85vh] w-full max-w-screen-xl bg-[#00000076]">
-        <div className="flex bg-[#080420] overflow-hidden h-full">
+    <div className="h-screen sm:w-screen flex flex-col justify-center gap-4 items-center bg-[#131324]">
+      <div className="sm:h-4/5 h-full w-full max-w-screen-lg bg-[#00000076]">
+        <div className="flex sm:flex-row flex-col bg-[#080420] overflow-auto h-full">
           <Contacts contacts={contacts} changeChat={handleChatChange} />
           {currentChat === undefined ? (
             <Welcome currentUser={currentUser} />

@@ -2,10 +2,8 @@ import * as yup from "yup";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import { SocketContext } from "../../contexts/SocketContext";
 import { api } from "../../api";
 import { toast } from "react-toastify";
-import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -33,8 +31,6 @@ const registerSchema = yup.object({
 
 export default function Register() {
   const navigate = useNavigate();
-
-  const { setSocket } = useContext(SocketContext);
 
   const inputStyle =
     "bg-transparent p-4 border border-[#4e0eff] rounded-md text-white w-full text-base focus:border-[#997af0] focus:outline-none";

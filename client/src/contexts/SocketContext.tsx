@@ -1,6 +1,5 @@
-import { ReactNode, createContext, useState } from "react";
-
-import { Socket } from "socket.io-client";
+import { ReactNode, createContext, useEffect, useState } from "react";
+import { Socket, io } from "socket.io-client";
 
 interface SocketContextProps {
   socket: Socket | null;
@@ -18,6 +17,15 @@ interface SocketProviderProps {
 
 const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    const connectSocket = async () => {
+      const socket = await io("http://localhost:3001").connect();
+      setSocket(socket);
+    };
+    connectSocket();
+  }, []);
+
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>
       {children}

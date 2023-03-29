@@ -5,6 +5,7 @@ import { useContext, useEffect } from "react";
 
 import { SocketContext } from "../../contexts/SocketContext";
 import { api } from "../../api";
+import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -27,12 +28,7 @@ export default function Login() {
   const inputStyle =
     "bg-transparent p-4 border border-[#4e0eff] rounded-md text-white w-full text-base focus:border-[#997af0] focus:outline-none";
 
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: {
       username: "",
@@ -45,6 +41,8 @@ export default function Login() {
     if (!data.success) {
       return toast.error(data.message);
     }
+    const socket = await io("http://localhost:3001").connect();
+    setSocket(socket);
     localStorage.setItem("chat-app-user", JSON.stringify(data.user));
     navigate("/");
   };
