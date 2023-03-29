@@ -31,7 +31,7 @@ const server = app.listen(process.env.PORT, () => {
 });
 
 const io = socketIO(server, {
-  cors: "http://127.0.0.1:5173/",
+  cors: process.env.FRONTEND_URL,
 });
 
 global.onlineUsers = new Map();
@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("messageRecieve", data.message);
+      socket.to(sendUserSocket).emit("messageReceive", data.message);
     }
   });
 });

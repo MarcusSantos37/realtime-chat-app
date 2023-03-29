@@ -9,7 +9,7 @@ module.exports.register = async (req, res, next) => {
     if (usernameCheck) {
       return res.json({
         success: false,
-        message: "Nome de usuário já está sendo utilizado",
+        message: "Username is already in use",
       });
     }
 
@@ -17,7 +17,7 @@ module.exports.register = async (req, res, next) => {
     if (emailCheck) {
       return res.json({
         success: false,
-        message: "Email já está sendo utilizado",
+        message: "Email is already being used",
       });
     }
 
@@ -44,7 +44,7 @@ module.exports.login = async (req, res, next) => {
     if (!user || !isPasswordValid) {
       return res.json({
         success: false,
-        message: "Usuário ou senha incorretos",
+        message: "Incorrect username or password",
       });
     }
 
