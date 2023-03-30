@@ -47,17 +47,17 @@ export default function Login() {
     if (!data.success) {
       return toast.error(data.message);
     }
-    const socket = await io(import.meta.env.BACKEND_URL).connect();
+    const socket = await io(import.meta.env.VITE_BACKEND_URL).connect();
     setSocket(socket);
     localStorage.setItem(
-      import.meta.env.LOCALHOST_KEY,
+      import.meta.env.VITE_LOCALHOST_KEY,
       JSON.stringify(data.user)
     );
     navigate("/");
   };
 
   useEffect(() => {
-    if (localStorage.getItem(import.meta.env.LOCALHOST_KEY)) {
+    if (localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY)) {
       navigate("/");
     }
   }, []);

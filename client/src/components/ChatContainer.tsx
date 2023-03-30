@@ -29,7 +29,7 @@ export default function ChatContainer({
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleSendMessage = async (message: string) => {
-    const storedUser = localStorage.getItem(import.meta.env.LOCALHOST_KEY);
+    const storedUser = localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY);
 
     if (storedUser) {
       const user = await JSON.parse(storedUser);

@@ -7,7 +7,9 @@ interface ContactsProps {
 }
 
 export default function Contacts({ contacts, changeChat }: ContactsProps) {
-  const currentUserString = localStorage.getItem(import.meta.env.LOCALHOST_KEY);
+  const currentUserString = localStorage.getItem(
+    import.meta.env.VITE_LOCALHOST_KEY
+  );
   const currentUser: User | null = currentUserString
     ? JSON.parse(currentUserString)
     : null;

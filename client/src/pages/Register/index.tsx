@@ -71,7 +71,7 @@ export default function Register() {
       }
 
       localStorage.setItem(
-        import.meta.env.LOCALHOST_KEY,
+        import.meta.env.VITE_LOCALHOST_KEY,
         JSON.stringify(data.user)
       );
       navigate("/");
