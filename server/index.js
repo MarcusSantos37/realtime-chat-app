@@ -33,7 +33,10 @@ const server = app.listen(port, () => {
 });
 
 const io = socketIO(server, {
-  cors: process.env.FRONTEND_URL,
+  cors: {
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  },
 });
 
 global.onlineUsers = new Map();
