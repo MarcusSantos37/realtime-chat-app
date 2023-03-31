@@ -20,7 +20,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     const connectSocket = async () => {
-      const socket = await io(import.meta.env.VITE_FRONTEND_URL).connect();
+      const socket = await io(import.meta.env.VITE_SOCKET_URL).connect();
       setSocket(socket);
     };
     connectSocket();
