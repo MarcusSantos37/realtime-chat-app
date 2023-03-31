@@ -19,12 +19,14 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const connectSocket = async () => {
-      const socket = await io(import.meta.env.VITE_SOCKET_URL).connect();
-      setSocket(socket);
-    };
-    connectSocket();
-  }, []);
+    if (!socket) {
+      const connectSocket = async () => {
+        const socket = await io(import.meta.env.VITE_BACKEND_URL).connect();
+        setSocket(socket);
+      };
+      connectSocket();
+    }
+  }, [socket]);
 
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>

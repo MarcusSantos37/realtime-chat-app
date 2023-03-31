@@ -58,7 +58,7 @@ export default function ChatContainer({
         setArrivalMessage({ fromSelf: false, message });
       });
     }
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     if (arrivalMessage) {
