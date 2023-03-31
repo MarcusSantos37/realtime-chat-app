@@ -40,13 +40,13 @@ export default function ChatContainer({
         message,
       });
 
-      await socket?.emit("sendMessage", {
+      const response = await socket?.emit("sendMessage", {
         from: currentUser?._id,
         to: currentChat._id,
         message,
       });
 
-      console.log("socket", socket);
+      console.log("socket", response);
 
       const newMessages = [...messages];
       newMessages.push({ fromSelf: true, message });
@@ -57,6 +57,7 @@ export default function ChatContainer({
   useEffect(() => {
     if (socket) {
       socket.on("messageReceive", (message: string) => {
+        console.log("messageReceive", message);
         setArrivalMessage({ fromSelf: false, message });
       });
     }
