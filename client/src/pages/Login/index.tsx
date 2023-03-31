@@ -44,7 +44,7 @@ export default function Login() {
     if (!data.success) {
       return toast.error(data.message);
     }
-    const socket = await io(import.meta.env.VITE_BACKEND_URL).connect();
+    const socket = await io(import.meta.env.VITE_FRONTEND_URL).connect();
     setSocket(socket);
     localStorage.setItem(
       import.meta.env.VITE_LOCALHOST_KEY,
