@@ -46,6 +46,8 @@ export default function ChatContainer({
         message,
       });
 
+      console.log("socket", socket);
+
       const newMessages = [...messages];
       newMessages.push({ fromSelf: true, message });
       setMessages(newMessages);
