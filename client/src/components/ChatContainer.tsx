@@ -40,7 +40,7 @@ export default function ChatContainer({
         message,
       });
 
-      socket?.emit("sendMessage", {
+      await socket?.emit("sendMessage", {
         from: currentUser?._id,
         to: currentChat._id,
         message,
